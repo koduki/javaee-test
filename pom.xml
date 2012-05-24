@@ -74,10 +74,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.glassfish.extras</groupId>
+            <groupId>org.glassfish.main.extras</groupId>
             <artifactId>glassfish-embedded-all</artifactId>
-            <version>3.1.1</version>
-            <scope>test</scope>
+            <version>3.1.2</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
@@ -88,7 +88,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.1</version>
+            <version>4.10</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -103,8 +103,6 @@
             <version>1.0.0.Final-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
-
-
     </dependencies>
 
     <build>
