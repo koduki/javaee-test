@@ -4,7 +4,7 @@
  */
 package cn.orz.pascal.javaee_example.dao;
 
-import cn.orz.pascal.javaee_example.entity.User;
+import cn.orz.pascal.javaee_example.entity.Users;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -14,7 +14,7 @@ import javax.persistence.PersistenceContext;
  * @author hiro
  */
 @Stateless
-public class UserFacade extends AbstractFacade<User> {
+public class UserFacade extends AbstractFacade<Users> {
     @PersistenceContext(unitName = "cn.orz.pascal_JavaEE_Example_war_1.0-SNAPSHOTPU")
     private EntityManager em;
 
@@ -24,7 +24,7 @@ public class UserFacade extends AbstractFacade<User> {
     }
 
     public UserFacade() {
-        super(User.class);
+        super(Users.class);
     }
 
 }

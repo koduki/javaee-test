@@ -4,9 +4,6 @@
  */
 package cn.orz.pascal.javaee_example.bean;
 import javax.ejb.EJB;
-import org.junit.*;
-import static org.junit.Assert.*;
-import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
