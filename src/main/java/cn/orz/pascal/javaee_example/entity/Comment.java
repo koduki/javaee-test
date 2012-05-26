@@ -1,13 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package cn.orz.pascal.javaee_example.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
-
 import javax.persistence.*;
 
 /**
@@ -15,29 +9,30 @@ import javax.persistence.*;
  * @author hiro
  */
 @Entity
-public class Article implements Serializable {
+public class Comment implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String title;
+    private String name;
     private String Contents;
-    private List<Comment> comments;
+    private Long articleId;
+    private Article article;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date createdAt;
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date updatedAt;
 
-    public Article() {
+    public Comment() {
     }
 
-    public Article(Long id, String title, String Contents) {
+    public Comment(Long id, String name, String Contents) {
 	this.id = id;
-	this.title = title;
+	this.name = name;
 	this.Contents = Contents;
     }
-    @Column(name="ID")
+
     public Long getId() {
 	return id;
     }
@@ -54,21 +49,31 @@ public class Article implements Serializable {
 	this.Contents = Contents;
     }
 
-    public String getTitle() {
-	return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-	this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    @OneToMany(fetch=FetchType.EAGER, mappedBy="article")
-    public List<Comment> getComments() {
-        return comments;
+    @Column(name="ARTICLE_ID")
+    public Long getArticleId() {
+        return articleId;
     }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
+    public void setArticleId(Long articleId) {
+        this.articleId = articleId;
+    }
+
+    @ManyToOne
+    @JoinColumn(table="ARTICLE", referencedColumnName="ID", name="ARTICLE_ID")
+    public Article getArticle() {
+        return article;
+    }
+
+    public void setArticle(Article article) {
+        this.article = article;
     }
 
     public Date getCreatedAt() {
@@ -95,13 +100,13 @@ public class Article implements Serializable {
 	if (getClass() != obj.getClass()) {
 	    return false;
 	}
-	final Article other = (Article) obj;
+	final Comment other = (Comment) obj;
 	if (this.id != other.id
 		&& (this.id == null || !this.id.equals(other.id))) {
 	    return false;
 	}
-	if ((this.title == null) ? (other.title != null) : !this.title
-		.equals(other.title)) {
+	if ((this.name == null) ? (other.name != null) : !this.name
+		.equals(other.name)) {
 	    return false;
 	}
 	if ((this.Contents == null) ? (other.Contents != null) : !this.Contents
@@ -125,7 +130,7 @@ public class Article implements Serializable {
     public int hashCode() {
 	int hash = 7;
 	hash = 43 * hash + (this.id != null ? this.id.hashCode() : 0);
-	hash = 43 * hash + (this.title != null ? this.title.hashCode() : 0);
+	hash = 43 * hash + (this.name != null ? this.name.hashCode() : 0);
 	hash = 43 * hash
 		+ (this.Contents != null ? this.Contents.hashCode() : 0);
 	hash = 43 * hash
@@ -137,7 +142,7 @@ public class Article implements Serializable {
 
     @Override
     public String toString() {
-	return "cn.orz.pascal.javaee_example.entity.Article[ id=" + id + " ]";
+	return "cn.orz.pascal.javaee_example.entity.Comment[ id=" + id + " ]";
     }
 
     @PrePersist

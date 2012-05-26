@@ -33,6 +33,8 @@ public class ArticleFacade extends AbstractFacade<Article> {
     }
 
     public List<Article> findRecently(int size) {
+	em.createNativeQuery("select * from ARTICLE").getResultList();
+	em.createNativeQuery("select article_id from COMMENT").getResultList();
 	String jpql = "SELECT a FROM Article a ORDER BY a.updatedAt DESC";
 	TypedQuery<Article> query = em.createQuery(jpql, Article.class).
 		setMaxResults(10);

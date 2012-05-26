@@ -18,9 +18,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Arrays;
 import java.util.List;
 import cn.orz.pascal.javaee_example.entity.Article;
+import cn.orz.pascal.javaee_example.entity.Comment;
+
 import javax.ejb.EJB;
 
 /**
@@ -43,6 +45,8 @@ public class ArticleFacadeTest extends AbstractJPATest {
     }
     @EJB
     ArticleFacade articleFacade;
+    @EJB
+    CommentFacade commentFacade;
 
     @Before
     public void preparePersistenceTest() throws Exception {
@@ -171,5 +175,26 @@ public class ArticleFacadeTest extends AbstractJPATest {
         for(Article article:articles){
             assertThat(article.getTitle(), is("title"+(i++)));
         }
+    }
+    
+    @Test
+    public void comment_add_Test() throws Exception {
+        // init and check.
+        assertThat(articleFacade.count(), is(0));
+        Article article = new Article(1L, "title1", "contents1");
+      //  article.setComments(Arrays.asList(new Comment(null, "user1", "comment1")));
+        articleFacade.create(article);
+        
+        Comment comment = new Comment(null, "user2", "comment2");
+        comment.setArticleId(1L);
+        commentFacade.create(comment);
+
+        // expected.
+        List<Article> articles = simpleSort(articleFacade.findAll(), "Title");
+        assertThat(articles.size(), is(1));
+        assertThat(article.getId(), is(1L));
+        assertThat(article.getTitle(), is("title1"));
+        assertThat(article.getComments().size(), is(1));
+
     }
 }
