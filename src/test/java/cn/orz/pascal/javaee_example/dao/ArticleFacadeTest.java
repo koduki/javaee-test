@@ -16,6 +16,9 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import cn.orz.pascal.javaee_example.entity.Article;
 import javax.ejb.EJB;
@@ -127,5 +130,46 @@ public class ArticleFacadeTest extends AbstractJPATest {
         // record2
         assertThat(updatedArticles.get(1).getCreatedAt().getTime(), is(createdAt2));
         assertThat(updatedArticles.get(1).getUpdatedAt().getTime(), is(updatedAt2));
+    }
+
+    @Test
+    public void delete_Test() throws Exception {
+        // init and check.
+        load();
+        List<Article> articles = simpleSort(articleFacade.findAll(), "Id");
+        assertThat(articles.size(), is(2));
+
+        // action
+        articleFacade.remove(articles.get(0));
+
+        // expected
+        List<Article> removedArticles = simpleSort(articleFacade.findAll(), "Id");
+        assertThat(removedArticles.size(), is(1));
+        // record1
+        assertThat(removedArticles.get(0).getTitle(), is("title2"));
+    }
+    
+    
+    @Test
+    public void find_recent_articles_Test() throws Exception {
+        // init and check.
+        assertThat(articleFacade.count(), is(0));
+        for(int i=0; i< 100; i++){
+            SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+
+            Article article = new Article(null, "title" + i, "contents" + i);
+            article.setCreatedAt(df.parse("2012/04/1"));
+            article.setUpdatedAt(df.parse((2012 + i) + "/04/1"));
+            articleFacade.create(article);
+        }
+        assertThat(articleFacade.count(), is(100));
+
+        // expected.
+        List<Article> articles = simpleSort(articleFacade.findRecently(10), "Title");
+        assertThat(articles.size(), is(10));
+        int i=90;
+        for(Article article:articles){
+            assertThat(article.getTitle(), is("title"+(i++)));
+        }
     }
 }
