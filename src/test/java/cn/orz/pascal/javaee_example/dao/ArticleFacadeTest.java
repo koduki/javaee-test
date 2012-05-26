@@ -5,7 +5,8 @@
 package cn.orz.pascal.javaee_example.dao;
 
 import static org.junit.Assert.*;
-import static org.hamcrest.core.Is.*;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.greaterThan;
 import org.junit.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -51,6 +52,11 @@ public class ArticleFacadeTest extends AbstractJPATest {
         utx.commit();
     }
 
+    private void load() throws Exception {
+        articleFacade.create(new Article(null, "title1", "contents1"));
+        articleFacade.create(new Article(null, "title2", "contents2"));
+    }
+
     @Test
     public void save_and_select_Test() {
         // init and check.
@@ -73,7 +79,7 @@ public class ArticleFacadeTest extends AbstractJPATest {
     }
 
     @Test
-    public void update_Test() {
+    public void update_Test() throws Exception {
         // init and check.
         load();
         List<Article> articles = simpleSort(articleFacade.findAll(), "Title");
@@ -94,8 +100,32 @@ public class ArticleFacadeTest extends AbstractJPATest {
         assertThat(updatedArticles.get(2).getTitle(), is("title4"));
     }
 
-    private void load() {
-        articleFacade.create(new Article(null, "title1", "contents1"));
-        articleFacade.create(new Article(null, "title2", "contents2"));
+    @Test
+    public void update_timestamp_Test() throws Exception {
+        // init and check.
+        load();
+        List<Article> articles = simpleSort(articleFacade.findAll(), "Id");
+        assertThat(articles.size(), is(2));
+        assertThat(articles.get(0).getCreatedAt(), is(notNullValue()));
+        assertThat(articles.get(0).getUpdatedAt(), is(notNullValue()));
+        Long createdAt1 = articles.get(0).getCreatedAt().getTime();
+        Long updatedAt1 = articles.get(0).getUpdatedAt().getTime();
+        Long createdAt2 = articles.get(1).getCreatedAt().getTime();
+        Long updatedAt2 = articles.get(1).getUpdatedAt().getTime();
+
+        // action
+        articles.get(0).setTitle("title3");
+        articleFacade.edit(articles.get(0));
+        articleFacade.edit(new Article(null, "title4", "contents4"));
+
+        // expected
+        List<Article> updatedArticles = simpleSort(articleFacade.findAll(), "Id");
+        assertThat(updatedArticles.size(), is(3));
+        // record1
+        assertThat(updatedArticles.get(0).getCreatedAt().getTime(), is(createdAt1));
+        assertThat(updatedArticles.get(0).getUpdatedAt().getTime(), is(greaterThan(updatedAt1)));
+        // record2
+        assertThat(updatedArticles.get(1).getCreatedAt().getTime(), is(createdAt2));
+        assertThat(updatedArticles.get(1).getUpdatedAt().getTime(), is(updatedAt2));
     }
 }
